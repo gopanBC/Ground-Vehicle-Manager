@@ -1,0 +1,4 @@
+<launch>
+    <node name="robot_state_machine_node" pkg="robot_state_machine" type="robot_state_machine_node" output="screen">
+    </node>
+</launch>
