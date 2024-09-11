@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(robot_state_machine)
 
 ## Compile as C++11, supported since ROS Kinetic
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
@@ -32,6 +32,10 @@ add_executable(robot_state_machine_node
   src/error.cpp 
   src/idle.cpp
   src/running.cpp
+  src/route_planning.cpp
+  src/move.cpp
+  src/control.cpp
+  src/behaviour_planning.cpp
   src/robot_sm_node.cpp)
 
 ## Link the Boost statechart library and ROS libraries to the executable

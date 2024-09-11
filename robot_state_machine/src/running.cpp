@@ -2,7 +2,6 @@
 #include "../include/robot_state_machine/error.h"
 
 Running::Running(my_context ctx) : my_base(ctx) {
-    ROS_INFO("Entering RUNNING state.");
     this->context<RobotStateMachine>().publishState("RUNNING");
 }
 

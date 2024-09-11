@@ -6,6 +6,10 @@
 // Global state machine instance
 RobotStateMachine* robot_state_machine;
 
+void signalHandler(int signum) {
+    robot_state_machine->process_event(Stop());
+}
+
 // ROS callbacks
 void goalCallback(const std_msgs::String::ConstPtr& msg) {
     ROS_INFO("Received new goal: %s", msg->data.c_str());

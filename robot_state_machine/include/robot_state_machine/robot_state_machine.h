@@ -19,6 +19,9 @@ struct Idle;
 struct StartRunning : public boost::statechart::event<StartRunning> {};
 struct ErrorDetected : public boost::statechart::event<ErrorDetected> {};
 struct ErrorCleared : public boost::statechart::event<ErrorCleared> {};
+struct GoalReached : public boost::statechart::event<GoalReached> {};
+struct RoutePlanned : public boost::statechart::event<RoutePlanned> {};
+struct Stop : public boost::statechart::event<Stop> {};
 
 // State machine definition
 struct RobotStateMachine : public boost::statechart::state_machine<RobotStateMachine, Idle> {
