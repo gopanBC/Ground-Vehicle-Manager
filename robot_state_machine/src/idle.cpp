@@ -8,6 +8,7 @@ Idle::Idle(my_context ctx) : my_base(ctx) {
 }
 
 boost::statechart::result Idle::react(const StartRunning& running) {
+    this->context<RobotStateMachine>().setNewGoal(running.goal);
     return transit<Running>();
 }
 

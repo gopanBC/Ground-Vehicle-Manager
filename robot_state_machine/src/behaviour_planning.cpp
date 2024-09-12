@@ -10,7 +10,7 @@ BehaviourPlanning::BehaviourPlanning(my_context ctx) : my_base(ctx), running_(tr
                                     behaviour_plan_(this->context<Move>().getBehaviourPlan()) {
     this->context<RobotStateMachine>().publishState("MOVE:BP");
     goal_ = this->context<RobotStateMachine>().getGoal();
-    planning_thread_ = std::thread(&BehaviourPlanning::run, this);
+    planning_thread_ = std::thread(&BehaviourPlanning::run, this); 
 }
 
 boost::statechart::result BehaviourPlanning::react(const GoalReached& goal_reached) {
@@ -48,10 +48,13 @@ void BehaviourPlanning::run()
         auto vehicle_state = this->context<RobotStateMachine>().getVehicleState();
         auto state = convertVehicleState(vehicle_state);
         if(distance(goal_, state) < 0.2) {
-            post_event(GoalReached());
+            //post_event(GoalReached());
+            break;
         }  
         std::this_thread::sleep_for(100ms);
     }
+    post_event(GoalReached());
+    //this->context<RobotStateMachine>().process_event(GoalReached());
 }
 
 void BehaviourPlanning::stop()

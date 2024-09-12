@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Find the Boost libraries that we need (for statechart)
 find_package(Boost REQUIRED COMPONENTS)
+find_package(Protobuf REQUIRED)
 
 ## Declare a catkin package
 catkin_package(
@@ -27,6 +28,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
+  ${PROTOBUF_INCLUDE_DIRS}
 )
 
 ## Declare the executable and link the necessary libraries
@@ -42,12 +44,14 @@ add_executable(robot_state_machine_node
   src/robot_sm_node.cpp
   src/utilities/waypoint_reader.cpp
   src/controllers/controller_factory.cpp
-  src/controllers/pure_pursuit.cpp)
+  src/controllers/pure_pursuit.cpp
+  msg/diagnostics.pb.cc)
 
 ## Link the Boost statechart library and ROS libraries to the executable
 target_link_libraries(robot_state_machine_node
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
+  ${PROTOBUF_LIBRARIES}
   atomic
 )
 

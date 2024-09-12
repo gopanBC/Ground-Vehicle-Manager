@@ -4,6 +4,8 @@
 #include "../include/robot_state_machine/error.h"
 #include "../include/robot_state_machine/utilities/waypoint_reader.h"
 
+#include "../msg/diagnostics.pb.h"
+
 #include <geometry_msgs/Pose.h>
 
 // Global state machine instance
@@ -29,9 +31,12 @@ void goalCallback(const geometry_msgs::Pose& msg) {
 }
 
 void diagnosticsCallback(const std_msgs::String::ConstPtr& msg) {
-    if (msg->data == "ERROR") {
+    DiagnosticsMessage diag_msg;
+    diag_msg.ParseFromString(msg->data); //deserialise protobuf string
+
+    if (diag_msg.status() == DiagnosticsMessage::ERROR) {
         robot_state_machine->process_event(ErrorDetected());
-    } else if (msg->data == "CLEAR") {
+    } else if (diag_msg.status() == DiagnosticsMessage::OK ) {
         robot_state_machine->process_event(ErrorCleared());
     }
 }
