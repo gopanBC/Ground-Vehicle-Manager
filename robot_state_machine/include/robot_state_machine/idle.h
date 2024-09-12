@@ -16,10 +16,12 @@ struct Idle : public boost::statechart::state<Idle, RobotStateMachine> {
     typedef boost::mpl::list<
         //boost::statechart::transition<StartRunning, Running>
         //boost::statechart::transition<ErrorDetected, Error>
-        boost::statechart::custom_reaction<StartRunning>, boost::statechart::custom_reaction<ErrorDetected>
+        boost::statechart::custom_reaction<StartRunning>, boost::statechart::custom_reaction<ErrorDetected>,
+        boost::statechart::custom_reaction<Routes>
     > reactions;
     boost::statechart::result react(const StartRunning& running);
     boost::statechart::result react(const ErrorDetected& error);
+    boost::statechart::result react(const Routes& routes);
     ~Idle();
 };
 

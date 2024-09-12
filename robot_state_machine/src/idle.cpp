@@ -6,12 +6,18 @@ Idle::Idle(my_context ctx) : my_base(ctx) {
     ROS_INFO("Entering IDLE state.");
     this->context<RobotStateMachine>().publishState("IDLE");
 }
- boost::statechart::result Idle::react(const StartRunning& running) {
-    return transit<Running>();
- }
 
- boost::statechart::result Idle::react(const ErrorDetected& error) {
+boost::statechart::result Idle::react(const StartRunning& running) {
+    return transit<Running>();
+}
+
+boost::statechart::result Idle::react(const Routes& routes) {
+    this->context<RobotStateMachine>().saveRoutes(routes.x, routes.y, routes.yaw);
+    return discard_event();
+}
+
+boost::statechart::result Idle::react(const ErrorDetected& error) {
     return transit<Error>(); 
- }
+}
  
 Idle::~Idle() {}

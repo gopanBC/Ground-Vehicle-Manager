@@ -8,6 +8,9 @@ add_compile_options(-std=c++14)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  geometry_msgs
+  gazebo_msgs
+  tf
 )
 
 ## Find the Boost libraries that we need (for statechart)
@@ -16,7 +19,7 @@ find_package(Boost REQUIRED COMPONENTS)
 ## Declare a catkin package
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp std_msgs
+  CATKIN_DEPENDS roscpp std_msgs geometry_msgs gazebo_msgs tf
 )
 
 ## Include directories
@@ -36,12 +39,16 @@ add_executable(robot_state_machine_node
   src/move.cpp
   src/control.cpp
   src/behaviour_planning.cpp
-  src/robot_sm_node.cpp)
+  src/robot_sm_node.cpp
+  src/utilities/waypoint_reader.cpp
+  src/controllers/controller_factory.cpp
+  src/controllers/pure_pursuit.cpp)
 
 ## Link the Boost statechart library and ROS libraries to the executable
 target_link_libraries(robot_state_machine_node
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
+  atomic
 )
 
 ## Mark executable for installation

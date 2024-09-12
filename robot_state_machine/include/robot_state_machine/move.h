@@ -41,10 +41,12 @@ private:
     std::atomic<bool> running_;
     std::vector<geometry_msgs::Pose> behaviour_plan_; // The shared behavior plan
     std::mutex behaviour_plan_mutex_; // Mutex for thread-safe access
+    geometry_msgs::Pose goal_;
 
     void run();
     void stop();
-
+    double distance(const geometry_msgs::Pose& pose1, const geometry_msgs::Pose& pose2);
+    geometry_msgs::Pose convertVehicleState(const VehicleState& vehicle_state);
 };
 
 struct Control: boost::statechart::state<Control, Move::orthogonal< 1 > > {
@@ -62,6 +64,7 @@ private:
     std::atomic<bool> running_;
     std::vector<geometry_msgs::Pose> behaviour_plan_; // The shared behavior plan
     std::mutex behaviour_plan_mutex_; // Mutex for thread-safe access
+    std::vector<double> x_, y_, yaw_;
 
     void run();
     void stop();
