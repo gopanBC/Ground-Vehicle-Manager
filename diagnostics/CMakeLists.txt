@@ -24,6 +24,10 @@ include_directories(
 add_executable(sensor_monitor_node
   src/main.cpp
   src/sensors/battery_level_monitor.cpp
+  src/sensors/emergency_stop_monitor.cpp
+  src/sensors/gps_accuracy_monitor.cpp
+  src/sensors/internet_signal_monitor.cpp
+  src/sensors/temperature_level_monitor.cpp
   src/middleware/ros_middleware.cpp
   src/middleware/ros2_middleware.cpp
   src/rti/real_time_scheduler.cpp
