@@ -12,6 +12,7 @@ public:
 
     //constructor
     InternetSignalMonitor(const std::string& name, const std::string& topic);
+    ~InternetSignalMonitor();
 
     /**
      * @brief internet singal data callback implementation.
@@ -28,10 +29,11 @@ public:
     bool isError() const override;
 
 private:
-    bool is_error_;
+    std::atomic<bool> is_error_;
     float sensor_data_;
     std::string diagnostics_message_;
     std::pair<std::string, std::function<void(const std::string&)>> topic_and_cb_;
+    Timer* timer;
 };
 
 #endif // INTERNET_SIGNAL_MONITOR_H

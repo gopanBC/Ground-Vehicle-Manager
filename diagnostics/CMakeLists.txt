@@ -31,6 +31,7 @@ add_executable(sensor_monitor_node
   src/middleware/ros_middleware.cpp
   src/middleware/ros2_middleware.cpp
   src/rti/real_time_scheduler.cpp
+  src/utility/timer.cpp
   msg/diagnostics.pb.cc
   msg/sensor_data.pb.cc
 )

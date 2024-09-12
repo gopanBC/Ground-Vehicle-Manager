@@ -1,6 +1,8 @@
 #ifndef SENSOR_MONITOR_INTERFACE_H
 #define SENSOR_MONITOR_INTERFACE_H
 
+#include "../utility/timer.h"
+
 #include <string>
 #include <vector>
 #include <functional>

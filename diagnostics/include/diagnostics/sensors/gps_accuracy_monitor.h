@@ -13,6 +13,8 @@ public:
     //constructor
     GPSAccuracyMonitor(const std::string& name, const std::string& topic);
 
+    ~GPSAccuracyMonitor();
+
     /**
      * @brief gps accuracy data callback implementation.
      * @param protobuf_data gps accuracy information in protobuf string
@@ -28,10 +30,11 @@ public:
     bool isError() const override;
 
 private:
-    bool is_error_;
+    std::atomic<bool> is_error_;
     float sensor_data_;
     std::string diagnostics_message_;
     std::pair<std::string, std::function<void(const std::string&)>> topic_and_cb_;
+    Timer* timer;
 };
 
 #endif // GPS_ACCURACY_MONITOR_H
