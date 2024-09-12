@@ -1,8 +1,15 @@
 #include <iostream>
 #include "diagnostics/sensors/battery_level_monitor.h"
+#include "diagnostics/sensors/emergency_stop_monitor.h"
+#include "diagnostics/sensors/gps_accuracy_monitor.h"
+#include "diagnostics/sensors/internet_signal_monitor.h"
+#include "diagnostics/sensors/temperature_level_monitor.h"
+
 #include "diagnostics/middleware/ros2_middleware.h"
 #include "diagnostics/middleware/ros_middleware.h"
+
 #include "diagnostics/rti/real_time_scheduler.h"
+
 #include "../msg/diagnostics.pb.h"
 
 // Function to initialize middleware based on selection
@@ -27,11 +34,15 @@ int main(int argc, char** argv) {
 
     // Create sensor monitor
     BatteryLevelMonitor bms("BMS", {"bms_data"});
-    std::vector<SensorMonitorInterface*> sensors = {&bms};
+    EmergencyStopMonitor estop("Estop", {"Estop_data"});
+    GPSAccuracyMonitor gps("GPS", {"gps_accuracy_data"});
+    InternetSignalMonitor internet("Internet", {"internet_signal_data"});
+    TemperatureLevelMonitor temp("Temp", {"temp_level_data"});
+    std::vector<SensorMonitorInterface*> sensors = {&bms, &estop, &gps, &internet, &temp};
 
     //updating the subscriber topics-callback pair to the middleware.
     for(auto sensor : sensors) {
-       auto topic_and_cb = bms.getSubscribeTopics();
+       auto topic_and_cb = sensor->getSubscribeTopics();
        middleware->addSubscribers(topic_and_cb);
        middleware->subscribeAll();
     }
