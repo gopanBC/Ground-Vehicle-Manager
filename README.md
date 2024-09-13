@@ -27,6 +27,8 @@ The codebase is structured with the following in mind:
 
 The system is designed and implemented by considering the given requirements. The entire system is divided into two packages: diagnostics and robot_state_machine. Each package has exactly one process associated with it. The design of the entire system at the highest level is shown below.
 
+![System Overview](docs/images/overall.png)
+
 System running in an Ubuntu/ROS Noetic environment. Both diagnostics and state machine processes are started as ROS nodes, but the inter-process communication (IPC) between both processes does not use the ROS1 pub/sub or the service client model.
 
 One of the important design requirements is real-time execution. ROS1 is not suitable for this, which is why ZeroMQ (https://zeromq.org/) was used, as it can handle soft real-time deadlines. An ideal choice could have been a standalone DDS protocol, but due to time and other limitations, ZeroMQ was selected as the IPC mechanism between both processes.
