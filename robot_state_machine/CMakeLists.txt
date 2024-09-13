@@ -53,6 +53,7 @@ target_link_libraries(robot_state_machine_node
   ${Boost_LIBRARIES}
   ${PROTOBUF_LIBRARIES}
   atomic
+  zmq
 )
 
 ## Mark executable for installation
