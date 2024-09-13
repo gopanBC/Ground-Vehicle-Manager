@@ -1,6 +1,6 @@
 #include "diagnostics/sensors/battery_level_monitor.h"
 
-BatteryLevelMonitor::BatteryLevelMonitor(const std::string& name, const std::string& topic) : is_error_(false) {
+BatteryLevelMonitor::BatteryLevelMonitor(const std::string& name, const std::string& topic) : is_error_(false), sensor_data_(100.0) {
     component_name_ = name;
     topic_and_cb_.first = topic;
     topic_and_cb_.second = std::bind(&BatteryLevelMonitor::collectData, this, std::placeholders::_1);

@@ -1,6 +1,6 @@
 #include "diagnostics/sensors/temperature_level_monitor.h"
 
-TemperatureLevelMonitor::TemperatureLevelMonitor(const std::string& name, const std::string& topic) : is_error_(false) {
+TemperatureLevelMonitor::TemperatureLevelMonitor(const std::string& name, const std::string& topic) : is_error_(false), sensor_data_(30.0) {
     component_name_ = name;
     topic_and_cb_.first = topic;
     topic_and_cb_.second = std::bind(&TemperatureLevelMonitor::collectData, this, std::placeholders::_1);

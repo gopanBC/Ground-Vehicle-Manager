@@ -1,6 +1,6 @@
 #include "diagnostics/sensors/emergency_stop_monitor.h"
 
-EmergencyStopMonitor::EmergencyStopMonitor(const std::string& name, const std::string& topic) : is_error_(false) {
+EmergencyStopMonitor::EmergencyStopMonitor(const std::string& name, const std::string& topic) : is_error_(false), sensor_data_(0) {
     component_name_ = name;
     topic_and_cb_.first = topic;
     topic_and_cb_.second = std::bind(&EmergencyStopMonitor::collectData, this, std::placeholders::_1);

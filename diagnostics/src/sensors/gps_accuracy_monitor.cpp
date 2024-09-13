@@ -1,6 +1,7 @@
 #include "diagnostics/sensors/gps_accuracy_monitor.h"
 
-GPSAccuracyMonitor::GPSAccuracyMonitor(const std::string& name, const std::string& topic) : is_error_(false), timer(nullptr) {
+GPSAccuracyMonitor::GPSAccuracyMonitor(const std::string& name, const std::string& topic) : is_error_(false), timer(nullptr)
+                    , sensor_data_(100) {
     component_name_ = name;
     topic_and_cb_.first = topic;
     topic_and_cb_.second = std::bind(&GPSAccuracyMonitor::collectData, this, std::placeholders::_1);

@@ -1,6 +1,7 @@
 #include "diagnostics/sensors/internet_signal_monitor.h"
 
-InternetSignalMonitor::InternetSignalMonitor(const std::string& name, const std::string& topic) : is_error_(false), timer(nullptr) {
+InternetSignalMonitor::InternetSignalMonitor(const std::string& name, const std::string& topic) : is_error_(false), timer(nullptr)
+                        , sensor_data_(1) {
     component_name_ = name;
     topic_and_cb_.first = topic;
     topic_and_cb_.second = std::bind(&InternetSignalMonitor::collectData, this, std::placeholders::_1);

@@ -38,8 +38,8 @@ int main(int argc, char** argv) {
     GPSAccuracyMonitor gps("GPS", {"gps_accuracy_data"});
     InternetSignalMonitor internet("Internet", {"internet_signal_data"});
     TemperatureLevelMonitor temp("Temp", {"temp_level_data"});
-    //std::vector<SensorMonitorInterface*> sensors = {&bms, &estop, &gps, &internet, &temp};
-    std::vector<SensorMonitorInterface*> sensors = {&bms};
+    std::vector<SensorMonitorInterface*> sensors = {&bms, &estop, &gps, &internet, &temp};
+    //std::vector<SensorMonitorInterface*> sensors = {&bms};
 
     //updating the subscriber topics-callback pair to the middleware.
     for(auto sensor : sensors) {
@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
         std::string serialized_msg;
         combined_diag_msg.SerializeToString(&serialized_msg);
         middleware->publish(serialized_msg);
-    }, std::chrono::milliseconds(100));
+    }, std::chrono::nanoseconds(10000000), 90); //10ms
 
     // Spin to process middleware events
     middleware->spin();
