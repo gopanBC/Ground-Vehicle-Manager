@@ -28,7 +28,7 @@ RUN rosdep init && rosdep update
 WORKDIR /root/catkin_ws
 
 # Clone your Git repository into the src folder
-RUN git clone https://github.com/your-username/your-ros-repo.git src
+RUN git clone https://github.com/gopanBC/Ground-Vehicle-Manager.git src
 
 # Install ROS package dependencies using rosdep
 RUN rosdep install --from-paths src --ignore-src -r -y
@@ -40,16 +40,16 @@ RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 RUN echo "source /root/catkin_ws/devel/setup.bash" >> ~/.bashrc
 
 # Set environment variables for ROS
-ENV ROS_MASTER_URI=http://localhost:11311
+#ENV ROS_MASTER_URI=http://localhost:11311
 ENV ROS_PACKAGE_PATH=/root/catkin_ws/src:/opt/ros/noetic/share
-ENV ROS_IP=127.0.0.1
+#ENV ROS_IP=127.0.0.1
 
 # Expose the necessary ROS ports (11311 is the default ROS master port)
 EXPOSE 11311
 
 # Copy your launch file to the container (if you have a launch file)
-COPY launch_file.launch /root/catkin_ws/src/your_package/launch/launch_file.launch
+#COPY launch_file.launch /root/catkin_ws/src/your_package/launch/launch_file.launch
 
 # Set the default command to launch your ROS nodes
-CMD ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /root/catkin_ws/devel/setup.bash && roslaunch your_package launch_file.launch"]
+#CMD ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /root/catkin_ws/devel/setup.bash && roslaunch your_package launch_file.launch"]
 
