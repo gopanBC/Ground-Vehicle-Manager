@@ -130,7 +130,7 @@ TEST_F(BatteryLevelMonitorTest, SensorErrorAtExactLevel) {
     EXPECT_TRUE(battery_monitor->isError());  // Error should be triggered
 }
 
-// Test for sensor below error threshold
+// Test with mock data
 TEST_F(BatteryLevelMonitorTest, MockDataTest) {
     // Create a SensorData Protobuf message and set sensor data
     SensorData battery_data;

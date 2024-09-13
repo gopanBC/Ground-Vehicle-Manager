@@ -1,0 +1,4 @@
+<launch>
+    <!--node pkg="diagnostics" type="diagnostics_node" name="diagnostics_node" output="screen" /-->
+    <test test-name="nav_integration_test" pkg="diagnostics" type="nav_integration_test" time-limit="30" />
+</launch>
