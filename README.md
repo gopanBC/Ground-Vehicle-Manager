@@ -41,7 +41,7 @@ Google Protobuf is used as the message structure in the diagnostics system to ma
 
 ## Diagnostics System Design
 This system helps generate and diagnose various sensor data. The entire architecture is designed with portability and real-time execution in mind.
-![System Overview](docs/images/diagnostics.png)
+![Diagnostics system overview](docs/images/diagnostics.png)
 
 ### Code Structure:
 #### Middleware:
@@ -146,3 +146,147 @@ bool RealTimeScheduler::setRealTimePriority(std::thread& thread, int priority) {
 }
 ```
 - This data is published through ZeroMQ at a frequency of 100 Hz.
+
+## Robot State Machine Design
+This system is a higher-level state machine implemented using Boost StateChart, which manages various composite states and controls the navigation subsystem. It is a multithreaded application designed to meet real-time execution needs.
+
+The state machine is implemented using boost::statechart (https://www.boost.org/doc/libs/1_78_0/libs/statechart/doc/index.html), which supports composite states and features such as orthogonal states and event deferral.  Different colors represent the depth of the state chart. The outermost layer is the RobotStateMachine class, which holds all other states.
+
+Diagnostics System Design
+This system helps generate and diagnose various sensor data. The entire architecture is designed with portability and real-time execution in mind.
+
+Code Structure:
+Middleware:
+
+Provides an interface to implement any IPC middleware.
+Currently, ROS1 and ZeroMQ are implemented.
+The abstract middleware interface makes it easy to implement new middleware.
+cpp
+Copy code
+class MiddlewareInterface {
+public:
+    virtual ~MiddlewareInterface() = default;
+
+    virtual void initialize(int argc, char** argv) = 0;
+    virtual void spin() = 0;
+    virtual void publish(const std::string& message) = 0;
+    virtual void subscribeAll() = 0;
+    
+    inline void addSubscribers(std::pair<const std::string, std::function<void(const std::string&)>> topic_and_callback)  {
+        subscription_list.push_back(topic_and_callback);
+    }
+
+protected:
+    std::vector<std::pair<std::string, std::function<void(const std::string&)>>> subscription_list;
+};
+RTI:
+
+Contains an implementation called RealTimeScheduler.
+This class can be used to execute any function in a real-time thread.
+The main diagnostics control uses this thread loop to gather all sensor data and check whether any sensor is reporting an error.
+Sensors:
+
+Contains all sensor classes which collect relevant sensor data and diagnose it for errors.
+All classes inherit from a base sensor interface, making it easy to add new sensors to the system.
+cpp
+Copy code
+class SensorMonitorInterface {
+public:
+    virtual ~SensorMonitorInterface() = default;
+
+    /**
+     * @brief Interface to receive sensor data 
+     * @param Protobuf-encoded string msg
+     */
+    virtual void collectData(const std::string& protobuf_data) = 0;
+    
+    /**
+     * @brief Interface for performing diagnostics based on collected data
+     */
+    virtual void performDiagnostics() = 0;
+
+    /**
+     * @brief Interface to update diagnostics information for a particular sensor
+     * @return diagnostics in string format
+     */
+    virtual std::string getDiagnosticsMessage() const = 0;
+
+    virtual std::pair<std::string, std::function<void(const std::string&)>> getSubscribeTopics() const = 0;
+
+    virtual bool isError() const = 0;
+
+protected:
+    std::string component_name_;
+};
+All sensor classes subscribe to sensor messages through the intermediate interface.
+Sensor messages are in Google Protobuf format, and serialized data is used for IPC.
+Utilities:
+
+Contains a class to manage timer callbacks in threads.
+The Timer class can be used to create non-blocking function calls after a given time interval.
+All threads are implemented without locks, making them suitable for real-time execution.
+Design Considerations for Portability:
+Use of proper design patterns to make the system open for extension.
+
+The middleware abstract class ensures the architecture is independent of the middleware used.
+
+Any middleware can be easily added by implementing the interface.
+
+cpp
+Copy code
+std::string middleware_type = "ROS";
+std::string realtime_middleware_type = "ZEROMQ"; 
+std::string topic = "/diagnostics";
+
+// Create and initialize middleware
+auto middleware = createMiddleware(middleware_type, topic);
+auto rt_middleware = createMiddleware(realtime_middleware_type, topic);
+middleware->initialize(argc, argv);
+rt_middleware->initialize(argc, argv);
+Initialization, publishing, subscription, and spinning are all handled inside the interface, making the system easier to port.
+
+Design Considerations for Real-Time Execution:
+The primary mission-critical operation involves cycling through all sensors and checking for error reports.
+
+This control loop runs in a non-blocking thread with higher priority, implemented through the RealTimeScheduler interface.
+
+cpp
+Copy code
+bool RealTimeScheduler::setRealTimePriority(std::thread& thread, int priority) {
+    struct sched_param param;
+    param.sched_priority = priority; // Set to a real-time priority level (higher than most processes)
+
+    pthread_t pthread_id = thread.native_handle();
+    if (pthread_setschedparam(pthread_id, SCHED_FIFO, &param) != 0) {
+        ROS_WARN("Failed to set real-time priority for control execution thread.");
+        return false;
+    }
+    return true;
+}
+This data is published through ZeroMQ at a frequency of 100 Hz.
+
+## Robot State Machine Design
+This system is a higher-level state machine implemented using Boost StateChart, which manages various composite states and controls the navigation subsystem. It is a multithreaded application designed to meet real-time execution needs.
+![Robot State Machine](docs/images/robot_state_machine.png)
+
+The state machine is implemented using boost::statechart, which supports composite states and features such as orthogonal states and event deferral.
+Different colors represent the depth of the state chart.
+The outermost layer is the RobotStateMachine class, which holds all other states.
+### State Transitions:
+- On initialization, the system enters the Idle state.
+- From Idle, there are two possible state transitions:
+- If the diagnostics system reports an error, the system transitions to the Error state.
+- If the robot is in Idle and receives a new goal event, it transitions to the Running state.
+- The Running state is a composite state consisting of two other states: Route Planning, Move State
+- Upon entering Running, the system transitions to the Route Planning state, where it processes the route for the robot. Once ready, it moves to the Move state.
+
+- Move State is an orthogonal state, meaning it starts two simultaneous states: Behavior Planning and Control states.
+- Both the Behavior Planning and Control states start two real-time threads to execute the necessary real-time planning and control sequences.
+
+- The Behavior Planner is configured with a goal monitor that stops the robot upon reaching the goal and generates an internal event for transitioning back to Idle.
+
+- The Control State loads a configured controller at runtime through the Factory Design Pattern controller interface, allowing any controller to be loaded during execution. (This is not dynamic loading like the ROS plugin system).
+
+### Design Choices:
+The design intentionally avoids dependence on ROS and multiprocessing (not using the ROS plugin system).
+This may affect portability and real-time capabilities. Both threads in the Behavior Planner and Controller are executed in real-time.
