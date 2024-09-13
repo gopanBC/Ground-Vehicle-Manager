@@ -38,7 +38,8 @@ int main(int argc, char** argv) {
     GPSAccuracyMonitor gps("GPS", {"gps_accuracy_data"});
     InternetSignalMonitor internet("Internet", {"internet_signal_data"});
     TemperatureLevelMonitor temp("Temp", {"temp_level_data"});
-    std::vector<SensorMonitorInterface*> sensors = {&bms, &estop, &gps, &internet, &temp};
+    //std::vector<SensorMonitorInterface*> sensors = {&bms, &estop, &gps, &internet, &temp};
+    std::vector<SensorMonitorInterface*> sensors = {&bms};
 
     //updating the subscriber topics-callback pair to the middleware.
     for(auto sensor : sensors) {

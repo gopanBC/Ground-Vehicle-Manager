@@ -2,7 +2,8 @@
 #define GPS_ACCURACY_MONITOR_H
 
 #include "sensor_monitor_interface.h"
-#include "../msg/sensor_data.pb.h"  // Include Protobuf-generated header
+#include "../msg/sensor_data.pb.h" 
+#include "../utility/timer.h"
 
 /**
  * @brief GPS Accuracy monitor implementation
@@ -29,12 +30,13 @@ public:
 
     bool isError() const override;
 
+    Timer* timer;
+
 private:
     std::atomic<bool> is_error_;
     float sensor_data_;
     std::string diagnostics_message_;
     std::pair<std::string, std::function<void(const std::string&)>> topic_and_cb_;
-    Timer* timer;
 };
 
 #endif // GPS_ACCURACY_MONITOR_H

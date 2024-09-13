@@ -21,7 +21,7 @@ void TemperatureLevelMonitor::performDiagnostics() {
 	    is_error_ = false;
         diagnostics_message_ = "OK: Temperature if the system is below the threshold!";
     } 
-    else if (sensor_data_ == 55) {
+    else if (sensor_data_ >= 55) {
         diagnostics_message_ = "ERROR: Temperature of the system is High!";
 	    is_error_ = true;
     } 

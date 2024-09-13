@@ -19,7 +19,7 @@ void GPSAccuracyMonitor::collectData(const std::string& protobuf_data) {
 }
 
 void GPSAccuracyMonitor::performDiagnostics() {
-    // Example diagnostic check
+    //Example diagnostic check
     if (sensor_data_ <= 200) {
         if(timer != nullptr) {
             delete timer;

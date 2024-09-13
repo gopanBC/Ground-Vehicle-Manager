@@ -18,18 +18,14 @@ void BatteryLevelMonitor::collectData(const std::string& protobuf_data) {
 
 void BatteryLevelMonitor::performDiagnostics() {
     // Example diagnostic check
-    if (sensor_data_ < 60) {
+    if (sensor_data_ > 50) {
 	    is_error_ = false;
-        diagnostics_message_ = "WARNING: Sensor data nearing lower limit.";
+        diagnostics_message_ = "OK: Battery level of the system is fine.";
     } 
-    else if (sensor_data_ < 50) {
-        diagnostics_message_ = "ERROR: Sensor data below safe threshold!";
+    else if (sensor_data_ <= 50) {
+        diagnostics_message_ = "ERROR: Batterly level is below the limit!";
 	    is_error_ = true;
     } 
-    else {
-        diagnostics_message_ = "OK: Sensor is working fine.";
-	    is_error_ = false;
-    }
 }
 
 std::string BatteryLevelMonitor::getDiagnosticsMessage() const {
