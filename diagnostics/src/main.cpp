@@ -7,6 +7,7 @@
 
 #include "diagnostics/middleware/ros2_middleware.h"
 #include "diagnostics/middleware/ros_middleware.h"
+#include "diagnostics/middleware/zeromq.h"
 
 #include "diagnostics/rti/real_time_scheduler.h"
 
@@ -19,18 +20,21 @@ std::unique_ptr<MiddlewareInterface> createMiddleware(const std::string& type, c
         return std::make_unique<ROSMiddleware>(topic);
     } 
     else {
-        return std::make_unique<ROS2Middleware>(topic);  // Replace with actual implementation
+        return std::make_unique<ZeroMQMiddleware>();  // Replace with actual implementation
     }
 }
 
 int main(int argc, char** argv) {
     // Middleware type and topic
-    std::string middleware_type = "ROS";  // Change to ROS2 for ROS2 node implementation
+    std::string middleware_type = "ROS";
+    std::string realtime_middleware_type = "ZEROMQ";  //DDS will be better 
     std::string topic = "/diagnostics";
 
     // Create and initialize middleware
     auto middleware = createMiddleware(middleware_type, topic);
+    auto rt_middleware = createMiddleware(realtime_middleware_type, topic);
     middleware->initialize(argc, argv); //In this case its ROS1 node initialisation.
+    rt_middleware->initialize(argc, argv);
 
     // Create sensor monitor
     BatteryLevelMonitor bms("BMS", {"bms_data"});
@@ -75,6 +79,7 @@ int main(int argc, char** argv) {
         std::string serialized_msg;
         combined_diag_msg.SerializeToString(&serialized_msg);
         middleware->publish(serialized_msg);
+        rt_middleware->publish(serialized_msg);
     }, std::chrono::nanoseconds(10000000), 90); //10ms
 
     // Spin to process middleware events

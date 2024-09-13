@@ -32,6 +32,7 @@ add_executable(sensor_monitor_node
   src/sensors/temperature_level_monitor.cpp
   src/middleware/ros_middleware.cpp
   src/middleware/ros2_middleware.cpp
+  src/middleware/zeromq.cpp
   src/rti/real_time_scheduler.cpp
   src/utility/timer.cpp
   msg/diagnostics.pb.cc
@@ -42,6 +43,7 @@ add_executable(sensor_monitor_node
 target_link_libraries(sensor_monitor_node
   ${catkin_LIBRARIES}
   ${PROTOBUF_LIBRARIES}
+  zmq
 )
 
 # Add the test executable
